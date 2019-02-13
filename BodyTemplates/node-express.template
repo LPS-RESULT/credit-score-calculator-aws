@@ -1,0 +1,63 @@
+## This is a Body Mapping template for API Gateway which maps the event to pattern an expressjs request
+## The mapping will have body, headers, method, params, query, env, context:
+## body - refers to the json request body aka the main payload of the request
+## headers - refers to the headers contained in the original request
+## method - refers to the http method used
+## params - refers to the URL path parameters
+## query - refers to the query string parameters
+## env - refers to the environment variables mapping which is basically a copy of the stage variables
+## context - refers to the API Gateway context which includes information about the authorizers, ID's and user
+
+{
+    "body" : $input.json('$'),
+    "headers": {
+        #foreach($header in $input.params().header.keySet())
+            "$header": "$util.escapeJavaScript($input.params().header.get($header))"
+            #if($foreach.hasNext),#end
+        #end
+    },
+    "method": "$context.httpMethod",
+    "params": {
+        #foreach($param in $input.params().path.keySet())
+            "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+            #if($foreach.hasNext),#end
+        #end
+    },
+    "query": {
+        #foreach($queryParam in $input.params().querystring.keySet())
+            "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))"
+            #if($foreach.hasNext),#end
+        #end
+    },
+    "env" : {
+        #foreach($key in $stageVariables.keySet())
+            "$key" : "$util.escapeJavaScript($stageVariables.get($key))"
+            #if($foreach.hasNext),#end
+        #end
+    },
+    "context" : {
+        "account-id" : "$context.identity.accountId",
+        "api-id" : "$context.apiId",
+        "api-key" : "$context.identity.apiKey",
+        "authorizer" : {
+            #foreach($authorizerKey in $context.authorizer.keySet())
+                "$authorizerKey" : "$util.escapeJavaScript($context.authorizer.get($authorizerKey))"
+                #if($foreach.hasNext),#end
+            #end
+        },
+        "caller" : "$context.identity.caller",
+        "cognito-authentication-provider" : "$context.identity.cognitoAuthenticationProvider",
+        "cognito-authentication-type" : "$context.identity.cognitoAuthenticationType",
+        "cognito-identity-id" : "$context.identity.cognitoIdentityId",
+        "cognito-identity-pool-id" : "$context.identity.cognitoIdentityPoolId",
+        "http-method" : "$context.httpMethod",
+        "stage" : "$context.stage",
+        "source-ip" : "$context.identity.sourceIp",
+        "user" : "$context.identity.user",
+        "user-agent" : "$context.identity.userAgent",
+        "user-arn" : "$context.identity.userArn",
+        "request-id" : "$context.requestId",
+        "resource-id" : "$context.resourceId",
+        "resource-path" : "$context.resourcePath"
+    }
+}
