@@ -2,7 +2,7 @@
 
 ## About Credit Score Calculator AWS
 
-MEAN Puppeteer is built by awesome people.
+Credit Score Calculator AWS is built by awesome people.
 
 ## Developer's Guide
 
